@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,13 +78,15 @@ class MainActivity : AppCompatActivity() {
                 realm.executeTransaction {
                     val maxId = realm.where<TaskTitleModel>().max("id")
                     val nextId = (maxId?.toInt() ?: 0) + 1
+
+                    Log.i("いえーい", "id: $nextId ")
+
                     val taskBox = realm.createObject<TaskTitleModel>(nextId)
 
                     taskBox.title = taskTitle
                     taskBox.itemsLeft = 0               //need changed
 
                     adapter.notifyItemInserted(nextId - 1)
-
                     edit_taskTitle.text = null
                 }
 
@@ -161,7 +164,8 @@ class MainAdapter(private val context: Context, private val collection : Ordered
         p0.itemView.text_taskTitle.text = titleBox.title
 
         val colorIndex = Random.nextInt(10)
-        p0.itemView.text_taskTitle.setBackgroundResource(colorList[colorIndex])
+
+        p0.itemView.text_taskTitle.setBackgroundResource(colorList[1])         //need chaned
 
 
         val textForItemsLeft = when(titleBox.itemsLeft){
@@ -173,19 +177,18 @@ class MainAdapter(private val context: Context, private val collection : Ordered
 
         p0.itemView.titleDeleteButton.setOnClickListener {
 
+            Log.i("いえーい", "ポジション: $p1")
+
 
             realm.executeTransaction {
                 realm.where<TaskTitleModel>().equalTo("id", p1 + 1)?.findFirst()?.deleteFromRealm()
             }
-            notifyItemRemoved(p1)
+
+            notifyDataSetChanged()
         }
 
 
 
-
-
-
     }
-
 
 }
