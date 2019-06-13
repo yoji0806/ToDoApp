@@ -2,7 +2,6 @@ package com.yoji0806.to_doapp
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import com.yoji0806.to_doapp.R.color.*
 import io.realm.OrderedRealmCollection
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -20,6 +20,7 @@ import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.list_tasktitle.view.*
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,19 +54,14 @@ class MainActivity : AppCompatActivity() {
 
         fab.setOnClickListener {
 
+
             if (lowPosition) {
                 edit_taskTitle.visibility = View.VISIBLE
                 showSoftKeyboard(edit_taskTitle)
 
-                val layoutParam = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT)
-
-
-                    /*LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, C.WRAP_CONTENT)*/
+             /*   val layoutParam = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.WRAP_CONTENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT)
                 layoutParam.setMargins(860,150,0,0)
-
-
-                fab.layoutParams = layoutParam
-
+                fab.layoutParams = layoutParam*/
 
 
 
@@ -87,6 +83,8 @@ class MainActivity : AppCompatActivity() {
                     taskBox.itemsLeft = 0               //need changed
 
                     adapter.notifyItemInserted(nextId - 1)
+
+                    edit_taskTitle.text = null
                 }
 
 
@@ -132,9 +130,8 @@ class MainAdapter(private val context: Context, private val collection : Ordered
     : RealmRecyclerViewAdapter<TaskTitleModel, MainAdapter.MainViewHolder>(collection, autoUpdate){
 
     inner class MainViewHolder(private val view : View) : RecyclerView.ViewHolder(view){
-
-
     }
+
 
 
     override fun getItemCount(): Int {
@@ -153,6 +150,8 @@ class MainAdapter(private val context: Context, private val collection : Ordered
     }
 
 
+    private val colorList = listOf(c0, c1, c2, c3, c4, c5, c6, c7, c8, c9)
+
 
 
     //customize a view in a ViewHolder (In this case, 2TextViews  & one imageButton)
@@ -160,6 +159,10 @@ class MainAdapter(private val context: Context, private val collection : Ordered
 
         val titleBox = collection[p1]
         p0.itemView.text_taskTitle.text = titleBox.title
+
+        val colorIndex = Random.nextInt(10)
+        p0.itemView.text_taskTitle.setBackgroundResource(colorList[colorIndex])
+
 
         val textForItemsLeft = when(titleBox.itemsLeft){
             0 -> "0 item left"
@@ -169,10 +172,15 @@ class MainAdapter(private val context: Context, private val collection : Ordered
         p0.itemView.text_itemsLeft.text  = textForItemsLeft
 
         p0.itemView.titleDeleteButton.setOnClickListener {
+
+
             realm.executeTransaction {
-                realm.where<TaskTitleModel>().equalTo("id", p1)?.findFirst()?.deleteFromRealm()
+                realm.where<TaskTitleModel>().equalTo("id", p1 + 1)?.findFirst()?.deleteFromRealm()
             }
+            notifyItemRemoved(p1)
         }
+
+
 
 
 
