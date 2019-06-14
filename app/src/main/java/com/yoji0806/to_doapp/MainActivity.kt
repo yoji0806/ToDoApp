@@ -169,18 +169,21 @@ class MainAdapter(private val context: Context, private var collection : Ordered
     //customize a view in a ViewHolder (In this case, 2TextViews  & one imageButton)
     override fun onBindViewHolder(p0: MainViewHolder, p1: Int) {
 
-        val titleBox = collection[p1]
-        p0.itemView.text_taskTitle.text = titleBox.title
+        val titleBox = collection.sort("id", Sort.DESCENDING)[p1]
+
+        Log.i("いえーい", "ポジション: $p1, コレクション: $collection")
+
+        p0.itemView.text_taskTitle.text = titleBox?.title
 
         val colorIndex = Random.nextInt(10)
 
         p0.itemView.text_taskTitle.setBackgroundResource(colorList[1])         //need changed
 
 
-        val textForItemsLeft = when(titleBox.itemsLeft){
+        val textForItemsLeft = when(titleBox?.itemsLeft){
             0 -> "0 item left"
             1 -> "1 item left"
-            else -> "${titleBox.itemsLeft} items left"
+            else -> "${titleBox?.itemsLeft} items left"
         }
         p0.itemView.text_itemsLeft.text  = textForItemsLeft
 
@@ -189,11 +192,11 @@ class MainAdapter(private val context: Context, private var collection : Ordered
             realm.executeTransaction {
                 realm.where<TaskTitleModel>().equalTo("id", p1 + 1)?.findFirst()?.deleteFromRealm()
 
-                val query = realm.where<TaskTitleModel>()
-                val result = query.findAll()
-                result.sort( "id", Sort.DESCENDING)
+             /*   val query  = realm.where<TaskTitleModel>().findAll()
+                val result = query.sort( "id", Sort.DESCENDING)
 
-                collection = result
+
+                collection = result*/
             }
 
             notifyDataSetChanged()
@@ -202,8 +205,6 @@ class MainAdapter(private val context: Context, private var collection : Ordered
                 Log.i("チェック", "コレクション$collection")
 
         }
-
-
 
     }
 
