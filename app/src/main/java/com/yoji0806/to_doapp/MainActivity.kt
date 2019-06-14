@@ -169,7 +169,7 @@ class MainAdapter(private val context: Context, private var collection : Ordered
     //customize a view in a ViewHolder (In this case, 2TextViews  & one imageButton)
     override fun onBindViewHolder(p0: MainViewHolder, p1: Int) {
 
-        val titleBox = collection.sort("id", Sort.DESCENDING)[p1]
+        val titleBox = collection.sort("id", Sort.ASCENDING)[p1]
 
         Log.i("いえーい", "ポジション: $p1, コレクション: $collection")
 
