@@ -12,16 +12,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import com.yoji0806.to_doapp.R.color.*
-import io.realm.OrderedRealmCollection
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.RealmRecyclerViewAdapter
+import io.realm.*
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.list_tasktitle.view.*
 import kotlin.random.Random
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -79,7 +78,6 @@ class MainActivity : AppCompatActivity() {
                     val maxId = realm.where<TaskTitleModel>().max("id")
                     val nextId = (maxId?.toInt() ?: 0) + 1
 
-                    Log.i("いえーい", "id: $nextId ")
 
                     val taskBox = realm.createObject<TaskTitleModel>(nextId)
 
@@ -129,10 +127,21 @@ class MainActivity : AppCompatActivity() {
 
 
 
-class MainAdapter(private val context: Context, private val collection : OrderedRealmCollection<TaskTitleModel>, private val autoUpdate : Boolean, private val realm : Realm)
+class MainAdapter(private val context: Context, private var collection : OrderedRealmCollection<TaskTitleModel>, private val autoUpdate : Boolean, private val realm : Realm)
     : RealmRecyclerViewAdapter<TaskTitleModel, MainAdapter.MainViewHolder>(collection, autoUpdate){
 
-    inner class MainViewHolder(private val view : View) : RecyclerView.ViewHolder(view){
+    inner class MainViewHolder(view : View) : RecyclerView.ViewHolder(view){
+
+        init {
+
+
+            view.setOnClickListener {
+
+
+                Log.i("チェック：id", "${position}")
+            }
+        }
+
     }
 
 
@@ -165,7 +174,7 @@ class MainAdapter(private val context: Context, private val collection : Ordered
 
         val colorIndex = Random.nextInt(10)
 
-        p0.itemView.text_taskTitle.setBackgroundResource(colorList[1])         //need chaned
+        p0.itemView.text_taskTitle.setBackgroundResource(colorList[1])         //need changed
 
 
         val textForItemsLeft = when(titleBox.itemsLeft){
@@ -177,14 +186,21 @@ class MainAdapter(private val context: Context, private val collection : Ordered
 
         p0.itemView.titleDeleteButton.setOnClickListener {
 
-            Log.i("いえーい", "ポジション: $p1")
-
-
             realm.executeTransaction {
                 realm.where<TaskTitleModel>().equalTo("id", p1 + 1)?.findFirst()?.deleteFromRealm()
+
+                val query = realm.where<TaskTitleModel>()
+                val result = query.findAll()
+                result.sort( "id", Sort.DESCENDING)
+
+                collection = result
             }
 
             notifyDataSetChanged()
+
+
+                Log.i("チェック", "コレクション$collection")
+
         }
 
 
