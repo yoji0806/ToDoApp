@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -138,7 +137,6 @@ class MainAdapter(private val context: Context, private var collection : Ordered
             view.setOnClickListener {
 
 
-                Log.i("チェック：id", "${position}")
             }
         }
 
@@ -171,7 +169,6 @@ class MainAdapter(private val context: Context, private var collection : Ordered
 
         val titleBox = collection.sort("id", Sort.ASCENDING)[p1]
 
-        Log.i("いえーい", "ポジション: $p1, コレクション: $collection")
 
         p0.itemView.text_taskTitle.text = titleBox?.title
 
@@ -202,7 +199,6 @@ class MainAdapter(private val context: Context, private var collection : Ordered
             notifyDataSetChanged()
 
 
-                Log.i("チェック", "コレクション$collection")
 
         }
 
